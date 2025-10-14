@@ -122,7 +122,7 @@ async function handleGenerateClick() {
             throw new Error('Please provide ingredients by uploading an image or entering them manually.'); 
         }
         
-        showState('loading', `Found: ${ingredientsList}. Finding recipes...`);
+        showState('loading', `Found: ${ingredientsList}. Finding 5 relevant recipes...`);
         const recipes = await getRecipes(ingredientsList);
         currentRecipes = recipes;
         applyFiltersAndRender();
@@ -169,7 +169,7 @@ async function getIngredientsFromImage(base64) {
 
 async function getRecipes(ingredients) {
     const dietaryPreferences = Array.from(document.querySelectorAll('#dietary-options input:checked')).map(input => DIETARY_PREFERENCES.find(p => p.toLowerCase().replace(/ /g, '-') === input.id)).join(', ');
-    let prompt = `You are a creative chef. Generate 3 diverse recipes based on these ingredients: ${ingredients}. `;
+    let prompt = `You are a creative chef. Generate 5 diverse recipes based on these ingredients: ${ingredients}. `;
     if (dietaryPreferences) { prompt += `The recipes MUST adhere to these dietary restrictions: ${dietaryPreferences}. `; }
     prompt += `For each recipe, include a name, short description, cooking time, difficulty (Easy, Medium, Hard), servings, ingredients (including additions), step-by-step instructions, and estimated nutritional info (calories, protein, carbs, fat) per serving. Finally, for each recipe, you MUST find the most relevant YouTube video ID for a cooking tutorial based on the recipe name. Include this ID as the 'youtubeVideoId' key in the JSON object. For example, if the video URL is 'https://www.youtube.com/watch?v=AbCDeFgHiJk', the value for 'youtubeVideoId' should be 'AbCDeFgHiJk'. If no relevant video is found, this value should be an empty string "".`;
     const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json", responseSchema: recipeSchema } };
