@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Recipe Generator</title>
+    
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- External JavaScript (defer ensures HTML is loaded first) -->
+    <script src="script.js" type="module" defer></script>
+</head>
+<body class="text-gray-200">
+    <div class="container mx-auto p-4 md:p-8 relative z-10">
+        <header class="text-center mb-10 relative">
+            <h1 class="text-5xl md:text-6xl font-bold text-white" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">From Fridge to Feast</h1>
+            <p class="text-lg text-white/80 mt-2">Your ingredients, reflected into recipes you’ll actually love <i class="fa fa-cutlery" aria-hidden="true"></i></p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <aside class="lg:col-span-4 p-6 rounded-3xl shadow-xl glassmorphism">
+                <h2 class="text-2xl font-bold mb-4 border-b border-blue-300/20 pb-3 text-gray-200">Your Kitchen</h2>
+                <div class="mb-5"><div class="flex border-b border-gray-500/50"><button id="upload-tab" class="flex-1 py-2 text-center font-semibold text-orange-400 border-b-2 border-orange-400">Upload Photo</button><button id="manual-tab" class="flex-1 py-2 text-center font-semibold text-gray-400">Enter Manually</button></div></div>
+                <div id="image-upload-section">
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Upload a photo:</label>
+                    <div id="image-drop-zone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-500 border-dashed rounded-xl cursor-pointer hover:border-orange-400 transition bg-black/10"><div class="space-y-1 text-center"><svg class="mx-auto h-12 w-12 text-gray-500" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg><p class="text-sm text-gray-400">or drag and drop</p></div></div>
+                    <input id="image-upload" type="file" class="hidden" accept="image/png, image/jpeg">
+                    <div id="image-preview-container" class="mt-4 hidden"><img id="image-preview" src="#" alt="Image Preview" class="max-h-40 mx-auto rounded-lg shadow-md"/><button id="remove-image" class="mt-2 mx-auto block text-sm font-semibold text-red-500 hover:text-red-700">Remove Image</button></div>
+                </div>
+                <div id="manual-input-section" class="hidden">
+                     <label for="ingredients-manual" class="block text-sm font-semibold text-gray-300">Enter ingredients (comma separated):</label>
+                     <textarea id="ingredients-manual" rows="4" class="mt-1 block w-full rounded-md bg-slate-800 border-gray-600 shadow-sm focus:border-orange-400 focus:ring-orange-400 sm:text-sm placeholder-gray-400" placeholder="e.g., chicken breast, broccoli..."></textarea>
+                </div>
+                <div class="mt-6">
+                    <h3 class="text-lg font-bold text-gray-100">Dietary Preferences</h3>
+                    <div id="dietary-options" class="mt-2 grid grid-cols-2 gap-x-4 gap-y-2"></div>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="mt-6 pt-4 border-t border-blue-300/20">
+                    <h3 class="text-lg font-bold text-gray-100">Filters</h3>
+                    <div class="mt-2 space-y-3">
+                        <div>
+                            <label for="difficulty-filter" class="block text-sm font-medium text-gray-300">Difficulty</label>
+                            <select id="difficulty-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base filter-select rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                                <option>All</option>
+                                <option>Easy</option>
+                                <option>Medium</option>
+                                <option>Hard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="time-filter" class="block text-sm font-medium text-gray-300">Cooking Time</label>
+                            <select id="time-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base filter-select rounded-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                                <option value="999">Any</option>
+                                <option value="15">Under 15 mins</option>
+                                <option value="30">Under 30 mins</option>
+                                <option value="60">Under 1 hour</option>
+                                <option value="61">Over 1 hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button id="generate-btn" class="w-full bg-orange-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400 focus:ring-offset-gray-800 transition-all transform hover:scale-105">Generate Recipes</button>
+                </div>
+            </aside>
+
+            <main class="lg:col-span-8">
+                 <div id="results-container" class="p-6 rounded-3xl shadow-xl min-h-[600px] glassmorphism">
+                    <div id="empty-state" class="text-center py-20 flex flex-col justify-center items-center h-full"><svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-gray-500/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6.023 16.5A2.25 2.25 0 015.25 15h-1.5a2.25 2.25 0 01-2.25-2.25v-1.5A2.25 2.25 0 013.75 9h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-1.477 2.121l-2.073.876M12 3v4M10 5h4M12.023 16.5A2.25 2.25 0 0111.25 15h-1.5a2.25 2.25 0 01-2.25-2.25v-1.5A2.25 2.25 0 019.75 9h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-1.477 2.121l-2.073.876M19 3v4M17 5h4M19.023 16.5A2.25 2.25 0 0118.25 15h-1.5a2.25 2.25 0 01-2.25-2.25v-1.5A2.25 2.25 0 0116.75 9h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-1.477 2.121l-2.073.876" /></svg><h3 class="mt-4 text-2xl font-bold text-gray-300">Your Recipes Await</h3><p class="mt-1 text-base text-gray-400">Add ingredients to start cooking.</p></div>
+                    <div id="error-state" class="text-center py-20 hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-16 w-16 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg><h3 class="mt-2 text-2xl font-bold text-gray-200">Oops! Something went wrong.</h3><p id="error-message" class="mt-1 text-base text-gray-400">We couldn't generate recipes. Please try again.</p></div>
+                    <div id="loader-container" class="text-center py-20 hidden">
+                        <div class="cooking-pot-loader">
+                            <div class="pot-body"></div>
+                            <div class="pot-handle left"></div>
+                            <div class="pot-handle right"></div>
+                            <div class="pot-lid"></div>
+                            <div class="steam s1"></div>
+                            <div class="steam s2"></div>
+                            <div class="steam s3"></div>
+                        </div>
+                        <p id="loading-message" class="mt-8 text-lg font-semibold text-gray-300">Detecting ingredients...</p>
+                    </div>
+                    <div id="recipes-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+                 </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="recipe-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative mt-10 mb-10 mx-auto p-6 border-none w-full max-w-3xl shadow-2xl rounded-3xl glassmorphism">
+            <div class="mt-3"><button id="modal-close-btn" class="absolute top-5 right-5 text-gray-300 hover:text-white transition-transform hover:rotate-90"><svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <div class="text-center"><h3 id="modal-title" class="text-3xl leading-6 font-bold text-gray-100"></h3></div>
+                <div class="mt-4 prose max-w-none prose-invert">
+                    <div class="flex flex-wrap justify-center items-center gap-4 my-5 text-sm">
+                        <span id="modal-time" class="flex items-center gap-2 bg-slate-700/70 px-3 py-1 rounded-full font-semibold"></span>
+                        <span id="modal-difficulty" class="flex items-center gap-2 bg-slate-700/70 px-3 py-1 rounded-full font-semibold"></span>
+                        <div id="modal-servings" class="flex items-center gap-2 bg-slate-700/70 px-3 py-1 rounded-full font-semibold">
+                            <button id="servings-decrease" class="w-6 h-6 rounded-full bg-slate-600 hover:bg-slate-500">-</button>
+                            <span id="servings-display"></span>
+                            <button id="servings-increase" class="w-6 h-6 rounded-full bg-slate-600 hover:bg-slate-500">+</button>
+                        </div>
+                    </div>
+                    <p id="modal-description" class="text-gray-300 my-4 text-center"></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+                        <div><h4 class="font-bold text-xl mb-2 text-gray-200">Ingredients</h4><ul id="modal-ingredients" class="list-disc pl-5 space-y-1 text-gray-300"></ul></div>
+                        <div><h4 class="font-bold text-xl mb-2 text-gray-200">Nutrition (per serving)</h4><ul id="modal-nutrition" class="list-none pl-0 space-y-1 text-gray-300"></ul></div>
+                    </div>
+                    <h4 class="font-bold text-xl mt-6 mb-2 text-gray-200">Instructions</h4>
+                    <ol id="modal-instructions" class="space-y-3 text-gray-300"></ol>
+                    <div id="modal-video-container" class="mt-8"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
