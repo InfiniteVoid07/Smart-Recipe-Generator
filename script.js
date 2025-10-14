@@ -189,7 +189,7 @@ async function getRecipes(ingredients) {
  * This prevents the API key from being exposed in the front-end code.
  */
 async function makeApiCall(payload) {
-    const response = await fetch('/.netlify/functions/getRecipes', {
+    const response = await fetch('/api/getRecipes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
